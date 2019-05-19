@@ -680,6 +680,82 @@ window.extendLeaflet = function() {
 
 // BOOTING ///////////////////////////////////////////////////////////
 
+function prepPluginsToLoad() {
+
+  var priorities = {
+    lowest: 100,
+    low: 75,
+    normal: 50,
+    high: 25,
+    highest: 0,
+    map: -25,
+    boot: -50
+  }
+
+  function getPriority (data) {
+    var v = data && data.priority;
+    var prio = priorities[v || 'normal'] || v;
+    if (typeof prio !== 'number') {
+      console.warn('wrong plugin priority specified: ', v);
+      prio = priorities.normal;
+    }
+    return prio;
+  }
+
+  function prepInfo (data) {
+    data = data || { unknown: true };
+    if (data.script) {
+      var name = data.script.name;
+      if (name && name.substring(0, 13) === 'IITC plugin: ') {
+        data.script.name = name.substring(13);
+      }
+    } else {
+      data.script = {};
+    }
+    return data;
+  }
+
+  // executes setup function of plugin
+  // and collects info for About IITC
+  function safeSetup (setup) {
+    if (!setup) {
+      console.warn('plugin must provide setup function');
+    } else if (!setup.info) {
+      console.warn('plugin does not have proper wrapper:',setup);
+    }
+    var info = prepInfo(setup.info);
+    pluginsInfo.push(info);
+    try {
+      setup.call(this);
+    } catch (err) {
+      var name = info.script.name || info.pluginId;
+      console.error('error starting plugin: ' + name + ', error: ' + err);
+      info.error = err;
+    }
+  }
+
+  if (window.bootPlugins) { // sort plugins by priority
+    bootPlugins.sort(function (a,b) {
+      return getPriority(a) - getPriority(b);
+    });
+  } else {
+    window.bootPlugins = [];
+  }
+
+  var pluginsInfo = []; // for About IITC
+  bootPlugins.info = pluginsInfo;
+  pluginsInfo.iitc = prepInfo(script_info);
+
+  // loader function returned
+  // if called with parameter then load plugins with priorities up to specified
+  return function (prio) {
+    while (bootPlugins[0]) {
+      if (prio && getPriority(bootPlugins[0]) > priorities[prio]) { break; }
+      safeSetup(bootPlugins.shift());
+    }
+  };
+}
+
 function boot() {
   if(!isSmartphone()) // TODO remove completely?
     window.debug.console.overwriteNativeIfRequired();
@@ -687,6 +763,10 @@ function boot() {
   console.log('loading done, booting. Built: @@BUILDDATE@@');
   if(window.deviceID) console.log('Your device ID: ' + window.deviceID);
   window.runOnSmartphonesBeforeBoot();
+
+  var loadPlugins = prepPluginsToLoad();
+  loadPlugins('boot');
+
   window.extendLeaflet();
   window.extractFromStock();
   window.setupIdle();
@@ -695,6 +775,9 @@ function boot() {
   window.setupIcons();
   window.setupDialogs();
   window.setupDataTileParams();
+
+  loadPlugins('map');
+
   window.setupMap();
   window.setupOMS();
   window.search.setup();
@@ -722,16 +805,7 @@ function boot() {
 
   $('#sidebar').show();
 
-  if(window.bootPlugins) {
-    $.each(window.bootPlugins, function(ind, ref) {
-      try {
-        ref();
-      } catch(err) {
-        console.error("error starting plugin: index "+ind+", error: "+err);
-        debugger;
-      }
-    });
-  }
+  loadPlugins();
 
   window.setMapBaseLayer();
   window.setupLayerChooserApi();
@@ -744,8 +818,7 @@ function boot() {
   window.iitcLoaded = true;
   window.runHooks('iitcLoaded');
 
-
-  if (typeof android !== 'undefined' && android && android.bootFinished) {
+  if (typeof android !== 'undefined' && android.bootFinished) {
     android.bootFinished();
   }
 
