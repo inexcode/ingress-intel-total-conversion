@@ -669,6 +669,82 @@ window.extendLeaflet = function() {
 
 // BOOTING ///////////////////////////////////////////////////////////
 
+function prepPluginsToLoad() {
+
+  var priorities = {
+    lowest: 100,
+    low: 75,
+    normal: 50,
+    high: 25,
+    highest: 0,
+    map: -25,
+    boot: -50
+  }
+
+  function getPriority (data) {
+    var v = data && data.priority;
+    var prio = priorities[v || 'normal'] || v;
+    if (typeof prio !== 'number') {
+      console.warn('wrong plugin priority specified: ', v);
+      prio = priorities.normal;
+    }
+    return prio;
+  }
+
+  function prepInfo (data) {
+    data = data || { unknown: true };
+    if (data.script) {
+      var name = data.script.name;
+      if (name && name.substring(0, 13) === 'IITC plugin: ') {
+        data.script.name = name.substring(13);
+      }
+    } else {
+      data.script = {};
+    }
+    return data;
+  }
+
+  // executes setup function of plugin
+  // and collects info for About IITC
+  function safeSetup (setup) {
+    if (!setup) {
+      console.warn('plugin must provide setup function');
+    } else if (!setup.info) {
+      console.warn('plugin does not have proper wrapper:',setup);
+    }
+    var info = prepInfo(setup.info);
+    pluginsInfo.push(info);
+    try {
+      setup.call(this);
+    } catch (err) {
+      var name = info.script.name || info.pluginId;
+      console.error('error starting plugin: ' + name + ', error: ' + err);
+      info.error = err;
+    }
+  }
+
+  if (window.bootPlugins) { // sort plugins by priority
+    bootPlugins.sort(function (a,b) {
+      return getPriority(a) - getPriority(b);
+    });
+  } else {
+    window.bootPlugins = [];
+  }
+
+  var pluginsInfo = []; // for About IITC
+  bootPlugins.info = pluginsInfo;
+  pluginsInfo.iitc = prepInfo(script_info);
+
+  // loader function returned
+  // if called with parameter then load plugins with priorities up to specified
+  return function (prio) {
+    while (bootPlugins[0]) {
+      if (prio && getPriority(bootPlugins[0]) > priorities[prio]) { break; }
+      safeSetup(bootPlugins.shift());
+    }
+  };
+}
+
 function boot() {
   if(!isSmartphone()) // TODO remove completely?
     window.debug.console.overwriteNativeIfRequired();
@@ -676,6 +752,10 @@ function boot() {
   console.log('loading done, booting. Built: @@BUILDDATE@@');
   if(window.deviceID) console.log('Your device ID: ' + window.deviceID);
   window.runOnSmartphonesBeforeBoot();
+
+  var loadPlugins = prepPluginsToLoad();
+  loadPlugins('boot');
+
   window.extendLeaflet();
   window.extractFromStock();
   window.setupIdle();
@@ -684,6 +764,9 @@ function boot() {
   window.setupIcons();
   window.setupDialogs();
   window.setupDataTileParams();
+
+  loadPlugins('map');
+
   window.setupMap();
   window.setupOMS();
   window.search.setup();
@@ -711,46 +794,7 @@ function boot() {
 
   $('#sidebar').show();
 
-  if(window.bootPlugins) {
-    // check to see if a known 'bad' plugin is installed. If so, alert the user, and don't boot any plugins
-    var badPlugins = {
-      'arc': 'Contains hidden code to report private data to a 3rd party server: <a href="https://plus.google.com/105383756361375410867/posts/4b2EjP3Du42">details here</a>',
-    };
-
-    // remove entries from badPlugins which are not installed
-    $.each(badPlugins, function(name,desc) {
-      if (!(window.plugin && window.plugin[name])) {
-        // not detected: delete from the list
-        delete badPlugins[name];
-      }
-    });
-
-    // if any entries remain in the list, report this to the user and don't boot ANY plugins
-    // (why not any? it's tricky to know which of the plugin boot entries were safe/unsafe)
-    if (Object.keys(badPlugins).length > 0) {
-      var warning = 'One or more known unsafe plugins were detected. For your safety, IITC has disabled all plugins.<ul>';
-      $.each(badPlugins,function(name,desc) {
-        warning += '<li><b>'+name+'</b>: '+desc+'</li>';
-      });
-      warning += '</ul><p>Please uninstall the problem plugins and reload the page. See this <a href="https://iitc.modos189.ru/faq.html">FAQ entry</a> for help.</p><p><i>Note: It is tricky for IITC to safely disable just problem plugins</i></p>';
-
-      dialog({
-        title: 'Plugin Warning',
-        html: warning,
-        width: 400
-      });
-    } else {
-      // no known unsafe plugins detected - boot all plugins
-      $.each(window.bootPlugins, function(ind, ref) {
-        try {
-          ref();
-        } catch(err) {
-          console.error("error starting plugin: index "+ind+", error: "+err);
-          debugger;
-        }
-      });
-    }
-  }
+  loadPlugins();
 
   window.setMapBaseLayer();
   window.setupLayerChooserApi();
@@ -763,8 +807,7 @@ function boot() {
   window.iitcLoaded = true;
   window.runHooks('iitcLoaded');
 
-
-  if (typeof android !== 'undefined' && android && android.bootFinished) {
+  if (typeof android !== 'undefined' && android.bootFinished) {
     android.bootFinished();
   }
 
