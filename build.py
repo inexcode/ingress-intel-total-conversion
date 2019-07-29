@@ -115,8 +115,8 @@ def loaderString(var):
     return readfile(fn).replace('\\', '\\\\').replace('\n', '\\\n').replace('\'', '\\\'')
 
 
-def loaderCSS(fn):
-    return re.sub('(?<=url\()([^)#]+)(?=\))', loaderImage, loaderString(fn))
+def loaderCSS(var):
+    return re.sub('(?<=url\()"?([^)#]+?)"?(?=\))', loaderImage, loaderString(var))
 
 
 def loaderRaw(var):
@@ -126,11 +126,9 @@ def loaderRaw(var):
 
 def loaderImage(var):
     fn = var.group(1)
-    return 'data:image/png;base64,' + base64.b64encode(open(fn, 'rb').read()).decode('utf8')
-
-
-def loaderSVG(var):
-    return 'data:svg+xml;utf8,' + loaderString(var)
+    _, ext = os.path.splitext(fn)
+    return 'data:image/%s;base64,' % ('svg+xml' if ext == '.svg' else 'png') \
+        + base64.b64encode(open(fn, 'rb').read()).decode('utf8')
 
 
 def loadCode(ignore):
@@ -154,7 +152,6 @@ def doReplacements(script, updateUrl, downloadUrl, pluginName=None):
     script = re.sub('@@INCLUDESTRING:([0-9a-zA-Z_./-]+)@@', loaderString, script)
     script = re.sub('@@INCLUDECSS:([0-9a-zA-Z_./-]+)@@', loaderCSS, script)
     script = re.sub('@@INCLUDEIMAGE:([0-9a-zA-Z_./-]+)@@', loaderImage, script)
-    script = re.sub('@@INCLUDESVG:([0-9a-zA-Z_./-]+)@@', loaderSVG, script)
 
     script = script.replace('@@BUILDDATE@@', buildDate)
     script = script.replace('@@DATETIMEVERSION@@', dateTimeVersion)

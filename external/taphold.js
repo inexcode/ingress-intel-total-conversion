@@ -19,7 +19,7 @@
         // Merge the defaults and any user defined settings.
         settings = jQuery.extend({}, defaults, event.data);
 
-        // If object also has click handler, store it and unbind. Taphold will trigger the
+        // If object also has click handler, store it and unbind (.off). Taphold will trigger the
         // click itself, rather than normal propagation.
         if (typeof $elem.data("events") != "undefined"
             && typeof $elem.data("events").click != "undefined")
@@ -31,7 +31,7 @@
                 {
                     var handler = $elem.data("events").click[c].handler
                     $elem.data("taphold_click_handler", handler);
-                    $elem.unbind("click", handler);
+                    $elem.off("click", handler);
                     break;
                 }
             }
@@ -97,25 +97,21 @@
 
     // Determine if touch events are supported.
     var touchSupported = ("ontouchstart" in window) // Most browsers
-                         || ("onmsgesturechange" in window); // Mircosoft
+                         || ("onmsgesturechange" in window); // Microsoft
 
     var taphold = $.event.special.taphold =
     {
         setup: function(data)
         {
-            $(this).on((touchSupported ? "touchstart" : "mousedown"),  data, startHandler)
-                   .on((touchSupported ? "touchend"   : "mouseup"),    stopHandler)
-                   .on((touchSupported ? "touchmove"  : "mouseleave"), leaveHandler);
-            if(touchSupported)
-                $(this).on("touchcancel", leaveHandler);
+            $(this).on((touchSupported ? "touchstart"            : "mousedown"),  data, startHandler)
+                   .on((touchSupported ? "touchend"              : "mouseup"),    stopHandler)
+                   .on((touchSupported ? "touchmove touchcancel" : "mouseleave"), leaveHandler);
         },
         teardown: function(namespaces)
         {
-            $(this).off((touchSupported ? "touchstart" : "mousedown"),  startHandler)
-                   .off((touchSupported ? "touchend"   : "mouseup"),    stopHandler)
-                   .off((touchSupported ? "touchmove"  : "mouseleave"), leaveHandler);
-            if(touchSupported)
-                $(this).off("touchcancel", leaveHandler);
+            $(this).off((touchSupported ? "touchstart"            : "mousedown"),  startHandler)
+                   .off((touchSupported ? "touchend"              : "mouseup"),    stopHandler)
+                   .off((touchSupported ? "touchmove touchcancel" : "mouseleave"), leaveHandler);
         }
     };
 })(jQuery);
