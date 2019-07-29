@@ -11,9 +11,11 @@ import android.preference.PreferenceManager;
 import android.view.MenuItem;
 
 import androidx.core.app.NavUtils;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager.widget.ViewPager;
 
+import org.exarhteam.iitc_mobile.BuildConfig;
 import org.exarhteam.iitc_mobile.Log;
 import org.exarhteam.iitc_mobile.R;
 
@@ -31,7 +33,8 @@ public class ShareActivity extends FragmentActivity implements ActionBar.TabList
     public static Intent forFile(final Context context, final File file, final String type) {
         return new Intent(context, ShareActivity.class)
                 .putExtra(EXTRA_TYPE, TYPE_FILE)
-                .putExtra("uri", Uri.fromFile(file))
+                .putExtra("uri", FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider",file))
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 .putExtra("type", type);
     }
 
