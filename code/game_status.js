@@ -17,11 +17,12 @@ window.updateGameScore = function(data) {
     var s = r+e;
     var rp = r/s*100, ep = e/s*100;
     r = digits(r), e = digits(e);
-    var rs = '<span class="res" style="width:'+rp+'%;">'+Math.round(rp)+'%&nbsp;</span>';
-    var es = '<span class="enl" style="width:'+ep+'%;">&nbsp;'+Math.round(ep)+'%</span>';
-    $('#gamestat').html(rs+es).one('click', function() { window.updateGameScore() });
+    var rs = '<span class="res">' + r + '</span>';
+    var es = '<span class="enl">' + e + '</span>';
+    var scores = '<span class="res">' + Math.round(rp) + '%</span> / <span class="enl">' + Math.round(ep) + '%</span>';
+    $('#gamestat').html('<p>' + rs + ' / ' + es + '</p><p>' + scores).one('click', function() { window.updateGameScore() });
     // help cursor via “#gamestat span”
-    $('#gamestat').attr('title', 'Resistance:\t'+r+' MindUnits\nEnlightened:\t'+e+' MindUnits');
+    // $('#gamestat').attr('title', 'Resistance:\t'+r+' MindUnits\nEnlightened:\t'+e+' MindUnits');
   } else if (data && data.error) {
     console.warn('game score failed to load: '+data.error);
   } else {

@@ -417,6 +417,7 @@ window.setupPlayerStat = function() {
   } // else zero nextLvlAp - so at maximum level(?)
 
   var xmMax = parseInt(PLAYER.xm_capacity);
+  var xmCurrent = parseInt(PLAYER.energy);
   var xmRatio = Math.round(PLAYER.energy/xmMax*100);
 
   var cls = PLAYER.team === 'RESISTANCE' ? 'res' : 'enl';
@@ -429,17 +430,27 @@ window.setupPlayerStat = function() {
         + '\n\Invites:\t'+PLAYER.available_invites
         + '\n\nNote: your player stats can only be updated by a full reload (F5)';
 
+  var ap_circle = ''
+    + '<svg viewbox="50 0 50 100" class="test"><path fill="none" stroke-width="5" stroke="#282729" stroke-dasharray="125.6,125.6" d="M50 10 a 40 40 0 0 1 0 80 a 40 40 0 0 1 0 -80" />'
+    + '<path fill="none" stroke-width="5" stroke="' + (cls === 'res' ? '#00c5ff' : '#28F428') + '"stroke-dasharray="' + (nextLvlAp > 0 ? (lvlApProg * 1.256) + ',' + (251.2 - lvlApProg * 1.256) : '125.6,125.6') +'" d="M50 10 a 40 40 0 0 1 0 80 a 40 40 0 0 1 0 -80" /></svg>'
+  var xm_circle = ''
+    + '<svg viewbox="50 0 50 100" class="test"><path fill="none" stroke-width="5" stroke="#282729" stroke-dasharray="125.6,125.6" d="M50 10 a 40 40 0 0 1 0 80 a 40 40 0 0 1 0 -80" />'
+    + '<path fill="none" stroke-width="5" stroke="#7E6BF6" stroke-dasharray="' + (nextLvlAp > 0 ? (xmRatio * 1.256) + ',' + (251.2 - xmRatio * 1.256) : '125.6,125.6') + '" d="M50 10 a 40 40 0 0 1 0 80 a 40 40 0 0 1 0 -80" /></svg>'
+
   $('#playerstat').html(''
-    + '<h2 title="'+t+'">'+level+'&nbsp;'
-    + '<div id="name">'
-    + '<span class="'+cls+'">'+PLAYER.nickname+'</span>'
-    + '<a href="/_ah/logout?continue=https://www.google.com/accounts/Logout%3Fcontinue%3Dhttps://appengine.google.com/_ah/logout%253Fcontinue%253Dhttps://intel.ingress.com/intel%26service%3Dah" id="signout">sign out</a>'
+    + '<div id="player_level">'
+    + '<h2 title="' + t + '">' + level + '</h2>'
+    + '<div id="ap_circle">' + ap_circle + '</div>'
+    + '<div id="xm_circle">' + xm_circle + '</div>'
     + '</div>'
     + '<div id="stats">'
-    + '<sup>XM: '+xmRatio+'%</sup>'
-    + '<sub>' + (nextLvlAp > 0 ? 'level: '+lvlApProg+'%' : 'max level') + '</sub>'
+    + '<p id="ap_text" class="' + cls +'">' + ap + ' / ' + nextLvlAp + ' AP</p>'
+    + '<p id="xm_text">' + xmCurrent + ' XM</p>'
     + '</div>'
-    + '</h2>'
+    + '<div id="name" class="' + cls + '">' + PLAYER.nickname + '</div>'
+    
+   // + '<a href="/_ah/logout?continue=https://www.google.com/accounts/Logout%3Fcontinue%3Dhttps://appengine.google.com/_ah/logout%253Fcontinue%253Dhttps://intel.ingress.com/intel%26service%3Dah" id="signout">sign out</a>'
+  
   );
 }
 
