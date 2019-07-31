@@ -48,7 +48,6 @@ if (typeof(PLAYER)!="object" || typeof(PLAYER.nickname) != "string") {
 // possible without requiring scripts.
 document.getElementsByTagName('head')[0].innerHTML = ''
   + '<title>Ingress Intel Map</title>'
-  + '<style>@@INCLUDESTRING:external/material-components-web.min.css@@</style>'
   + '<style>@@INCLUDESTRING:style.css@@</style>'
   + '<style>@@INCLUDECSS:external/leaflet.css@@</style>'
 //note: smartphone.css injection moved into code/smartphone.js
