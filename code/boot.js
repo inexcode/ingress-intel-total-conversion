@@ -95,7 +95,7 @@ window.setupStyles = function() {
       '.leaflet-right { margin-right: '+(SIDEBAR_WIDTH+1)+'px } ',
       '#updatestatus { width:'+(SIDEBAR_WIDTH+2)+'px;  } ',
       '#sidebar { width:'+(SIDEBAR_WIDTH + HIDDEN_SCROLLBAR_ASSUMED_WIDTH + 1 /*border*/)+'px;  } ',
-      '#sidebartoggle { right:'+(SIDEBAR_WIDTH+1)+'px;  } ',
+     // '#sidebartoggle { right:'+(SIDEBAR_WIDTH+1)+'px;  } ',
       '#scrollwrapper  { width:'+(SIDEBAR_WIDTH + 2*HIDDEN_SCROLLBAR_ASSUMED_WIDTH)+'px; right:-'+(2*HIDDEN_SCROLLBAR_ASSUMED_WIDTH-2)+'px } ',
       '#sidebar > * { width:'+(SIDEBAR_WIDTH+1)+'px;  }'].join("\n")
     + '</style>');
@@ -458,17 +458,17 @@ window.setupSidebarToggle = function() {
   $('#sidebartoggle').on('click', function() {
     var toggle = $('#sidebartoggle');
     var sidebar = $('#scrollwrapper');
-    if(sidebar.is(':visible')) {
-      sidebar.hide().css('z-index', 1);
-      $('.leaflet-right').css('margin-right','0');
-      toggle.html('<span class="toggle open"></span>');
-      toggle.css('right', '0');
+    if (sidebar.hasClass('sidebar_visible')) {
+      //sidebar.hide().css('z-index', 1);
+      $('.leaflet-right').css('margin-right','80');
+      sidebar.removeClass("sidebar_visible");
+      sidebar.addClass("sidebar_unvisible")
     } else {
-      sidebar.css('z-index', 1001).show();
+      //sidebar.css('z-index', 1001).show();
       window.resetScrollOnNewPortal();
       $('.leaflet-right').css('margin-right', SIDEBAR_WIDTH+1+'px');
-      toggle.html('<span class="toggle close"></span>');
-      toggle.css('right', SIDEBAR_WIDTH+1+'px');
+      sidebar.removeClass("sidebar_unvisible");
+      sidebar.addClass("sidebar_visible")
     }
     $('.ui-tooltip').remove();
   });
@@ -731,7 +731,7 @@ function boot() {
   }
   urlPortal = getURLParam('pguid');
 
-  $('#sidebar').show();
+  //$('#sidebar').show();
 
   if(window.bootPlugins) {
     // check to see if a known 'bad' plugin is installed. If so, alert the user, and don't boot any plugins

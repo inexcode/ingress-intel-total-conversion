@@ -57,12 +57,19 @@ i.large { font-size: 6rem; }
   bottom: 45px;
   z-index: 1001;
   pointer-events: none;
+  transition: transform 0.5s ease;
+}
+#scrollwrapper.sidebar_unvisible {
+  transform: translateX(260px);
+  height: 65px;
+}
+#scrollwrapper.sidebar_visible {
+  transform: translateX(0);
 }
 
 #sidebar {
-  background-color: rgba(8, 48, 78, 0.9);
-  border-left: 1px solid #20A8B1;
-  color: #888;
+  background-color: rgba(40, 39, 41, 0.8);
+  color: #fff;
   position: relative;
   left: 0;
   top: 0;
@@ -71,23 +78,35 @@ i.large { font-size: 6rem; }
   overflow-x:hidden;
   z-index: 3000;
   pointer-events: auto;
+  transition: background-color 0.4s ease;
+  /* Probably someone in the future would see this in effect */
+  backdrop-filter: blur(6px);
+}
+
+#sidebar:hover {
+  background-color: rgba(40, 39, 41, 0.95);
+}
+#sidebar:focus-within {
+  background-color: rgba(40, 39, 41, 0.95);
 }
 
 #sidebartoggle {
-  display: block;
-  padding: 20px 5px;
-  margin-top: -31px; /* -(toggle height / 2) */
-  line-height: 10px;
-  position: absolute;
-  top: 108px;
-  z-index: 3001;
-  background-color: rgba(8, 48, 78, 0.9);
-  color: #FFCE00;
-  border: 1px solid #20A8B1;
-  border-right: none;
-  border-radius: 5px 0 0 5px;
-  text-decoration: none;
-  right: -50px; /* overwritten later by the script with SIDEBAR_WIDTH */
+  display: inline-block;
+  height: 24px;
+  width: 24px;
+  color: #7e6bf6;
+  cursor: pointer;
+  transition: transform 1s ease-out;
+}
+.sidebar_unvisible #sidebartoggle {
+  transform: rotateY(180deg);
+  padding: 20px 10px;
+  top: -20px;
+  position: relative;
+  left: -10px;
+}
+.sidebar_visible #sidebartoggle {
+  transform: rotateY(0deg);
 }
 
 .enl {
@@ -107,7 +126,7 @@ i.large { font-size: 6rem; }
 }
 
 a {
-  color: #ffce00;
+  color: #7E6BF6;
   cursor: pointer;
   text-decoration: none;
 }
@@ -389,26 +408,11 @@ summary {
 /* sidebar ************************************************************/
 
 #sidebar > * {
-  border-bottom: 1px solid #20A8B1;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
 
-
-
-#sidebartoggle .toggle {
-  border-bottom: 10px solid transparent;
-  border-top: 10px solid transparent;
-}
-
-#sidebartoggle .open {
-  border-right: 10px solid #FFCE00;
-}
-
-#sidebartoggle .close {
-  border-left: 10px solid #FFCE00;
-}
 
 /* player stats */
 #statbar {
@@ -521,45 +525,74 @@ input[type="search"], input[type="url"] {
 
 #searchwrapper {
   position: relative;
+  padding: 20px 10px;
+}
+#searchdecorator {
+  display: inline-block;
+  height: 30px;
+  position: absolute;
+  top: 20px;
+  width: 100%;
+  margin-left: 44px;
+  left: 0;
+  box-sizing: border-box;
+  padding-right: 15px;
+}
+#searchdecorator::after {
+
+    background-color: #3f51b5;
+    bottom: 5px;
+    content: '';
+    height: 2px;
+    left: 45%;
+    position: absolute;
+    transition-duration: .2s;
+    transition-timing-function: cubic-bezier(.4,0,.2,1);
+    visibility: hidden;
+    width: 10px;
+
+}
+#searchdecorator:focus-within::after {
+
+    width: 80%;
+    left: 0px;
+    visibility: visible;
+
 }
 #search {
-  width: 100%;
-  padding-right: 24px;
+
+    background: transparent;
+    color: #fff;
+    height: 24px;
+    font-size: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 4px 25px 4px 0;
+    width: auto;
+
 }
+
 #buttongeolocation {
   position: absolute;
-  right: 0;
-  top: 0;
+  right: 15px;
+  top: 21px;
   margin: 0;
   border: 0 none transparent;
   padding: 0 2px 0 0;
-  height: 24px;
+  height: 20px;
   background-color: transparent;
+  color: #7E6BF6;
+  cursor: pointer;
 }
-#buttongeolocation:focus {
-  outline: 1px dotted #ffce00;
-}
-#buttongeolocation img {
-  display: block;
-}
+
 #searchwrapper h3 {
   font-size: 1em;
   height: auto;
   cursor: pointer;
+  text-align: center;
 }
 .searchquery {
   max-height: 25em;
   overflow-y: auto;
-}
-#searchwrapper .ui-accordion-header::before {
-  font-size: 18px;
-  margin-right: 2px;
-  font-weight: normal;
-  line-height: 1em;
-  content: "⊞";
-}
-#searchwrapper .ui-accordion-header-active::before {
-  content: "⊟";
 }
 #searchwrapper .ui-accordion-content {
   margin: 0;
