@@ -105,19 +105,14 @@ window.renderPortalDetails = function(guid) {
     .html('') //to ensure it's clear
     .attr('class', TEAM_TO_CSS[teamStringToId(data.team)])
     .append(
-      $('<h3>', { class:'title' })
-        .text(title)
-        .prepend(
-          $('<svg><use xlink:href="#ic_place_24px"/><title>Click to move to portal</title></svg>')
-            .attr({
-              class: 'material-icons icon-button',
-              style: 'float: left'
-            })
+      $('<div>', { class: 'title info-item', title:'Click to move to portal' })
+        .html('<div class="info-icon" id="level" title="' + levelDetails + '">'
+        + levelInt + '</div><div class="info-text">' + title + '</div>')
             .click(function() {
               zoomToAndShowPortal(guid,[data.latE6/1E6,data.lngE6/1E6]);
               if (isSmartphone()) { show('map') };
-            })),
-
+            }),
+/*
       $('<span>').attr({
         class: 'close',
         title: 'Close [w]',
@@ -127,7 +122,7 @@ window.renderPortalDetails = function(guid) {
           renderPortalDetails(null);
           if (isSmartphone()) { show('map') };
         }),
-
+*/
       // help cursor via ".imgpreview img"
       $('<div>')
         .attr({
@@ -136,14 +131,12 @@ window.renderPortalDetails = function(guid) {
           style: 'background-image: url("' + img + '")'
         })
         .append(
-          $('<span>', { id: 'level', title: levelDetails })
-            .text(levelInt),
           $('<img>', { class: 'hide', src:img })
         ),
 
+      resoDetails,
       modDetails,
       miscDetails,
-      resoDetails,
       statusDetails,
 
       $('<div>', { class: 'linkdetails' })

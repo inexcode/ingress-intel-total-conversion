@@ -525,7 +525,7 @@ input[type="search"], input[type="url"] {
 
 #searchwrapper {
   position: relative;
-  padding: 20px 10px;
+  padding: 20px 10px 10px;
 }
 #searchdecorator {
   display: inline-block;
@@ -636,16 +636,35 @@ input[type="search"], input[type="url"] {
   padding: 0;
 }
 
+/* portal info generic styles */
+
+.info-item {
+    min-height: 30px;
+}
+
+.info-icon {
+
+    display: inline-block;
+    width: 20px;
+    padding: 5px 6px 5px 13px;
+    font-size: 24px;
+    text-align: center;
+    vertical-align: middle;
+
+}
+
+.info-text {
+    display: inline-block;
+    white-space: normal;
+    padding: 5px 5px;
+    font-size: 14px;
+    vertical-align: middle;
+    width: 240px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
 /* portal title and image */
-h3.title {
-  padding-right: 17px; /* to not overlap with close button */
-  margin: 2px 0;
-  line-height: 24px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
 
 .imgpreview {
   height: 190px;
@@ -665,12 +684,7 @@ h3.title {
 }
 
 #level {
-  font-size: 40px;
-  text-shadow: -1px -1px #000, 1px -1px #000, -1px 1px #000, 1px 1px #000, 0 0 5px #fff;
-  display: block;
-  margin-right: 15px;
-  text-align:right;
-  float: right;
+
 }
 
 /* portal mods */
