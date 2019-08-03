@@ -105,13 +105,18 @@ window.renderPortalDetails = function(guid) {
     .html('') //to ensure it's clear
     .attr('class', TEAM_TO_CSS[teamStringToId(data.team)])
     .append(
-      $('<div>', { class: 'title info-item', title:'Click to move to portal' })
+      $('<div>', { class: 'title-block', title:'Click to move to portal' })
         .html('<div class="info-icon" id="level" title="' + levelDetails + '">'
-        + levelInt + '</div><div class="info-text">' + title + '</div>')
+        + levelInt + '</div><h3 class="info-text title">' + title + '</h3>')
             .click(function() {
               zoomToAndShowPortal(guid,[data.latE6/1E6,data.lngE6/1E6]);
               if (isSmartphone()) { show('map') };
             }),
+      (details.owner ?
+        $('<div>', { class: 'info-item' }).html('<div class="info-icon">@@INCLUDESTRING:images/icon-account-key.svg@@</div>'
+          + '<div class="info-text">' + details.owner + '</div>')
+        : $('<div>')),
+      
 /*
       $('<span>').attr({
         class: 'close',

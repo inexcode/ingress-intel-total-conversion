@@ -110,11 +110,11 @@ i.large { font-size: 6rem; }
 }
 
 .enl {
-  color: #03fe03 !important;
+  color: #03fe03;
 }
 
 .res {
-  color: #00c5ff !important;
+  color: #00c5ff;
 }
 
 .none {
@@ -640,13 +640,18 @@ input[type="search"], input[type="url"] {
 
 .info-item {
     min-height: 30px;
+    color: white;
+}
+
+.title-block {
+    min-height: 30px;
 }
 
 .info-icon {
 
     display: inline-block;
     width: 20px;
-    padding: 5px 6px 5px 13px;
+    padding: 3px 6px 2px 13px;
     font-size: 24px;
     text-align: center;
     vertical-align: middle;
@@ -656,7 +661,7 @@ input[type="search"], input[type="url"] {
 .info-text {
     display: inline-block;
     white-space: normal;
-    padding: 5px 5px;
+    padding: 3px 5px 2px;
     font-size: 14px;
     vertical-align: middle;
     width: 240px;
@@ -667,12 +672,13 @@ input[type="search"], input[type="url"] {
 /* portal title and image */
 
 .imgpreview {
-  height: 190px;
+  height: 150px;
   background: no-repeat center center;
-  background-size: contain;
+  background-size: cover;
   cursor: help;
   overflow: hidden;
   position: relative;
+  margin: 5px 0;
 }
 
 .imgpreview img.hide {
@@ -684,7 +690,7 @@ input[type="search"], input[type="url"] {
 }
 
 #level {
-
+  padding: 3px 6px 2px 13px;
 }
 
 /* portal mods */
