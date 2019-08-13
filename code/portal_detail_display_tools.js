@@ -218,18 +218,18 @@ window.renderResonatorDetails = function(slot, level, nrg, nick) {
 
   var color = (level < 3 ? "#9900FF" : "#FFFFFF");
 
-  var lbar = level > 0 ? '<div class="meter-level" style="color: ' + color + ';">' + level + ' </div>' : '';
+  var lbar = '<div class="meter-level" style="color: ' + color + ';">' + level + ' </div>';
 
   var fill = '<div style="' + style_with_width + '"></div>';
   
-  var meter = '<div class="' + className + '" title="' + inf + '" style=' + style + '>' + fill + '</div>';
+  var meter = '<div class="' + className + '" style=' + style + '>' + fill + '</div>';
 
   nick = nick ? '<span class="nickname">' + nick + '</span>' : '';
 
 
-  var stats = '<div class="resostats">' + '<span class="resoenergy">' + Math.round(fillGrade) + '% (' + nrg + '/' + max + ')</span>' + nick + '</div>'
+  var stats = level > 0 ? '<div class="resostats">' + '<span class="resoenergy">' + Math.round(fillGrade) + '%</span>' + nick + '</div>' : '';
   
-  var menuentry = '<div class="resonator">' + meter + lbar + stats + '</div>'
+  var menuentry = '<div class="resonator" title="' + inf + '">' + meter + lbar + stats + '</div>';
 
   return menuentry;
 }
