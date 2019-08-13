@@ -143,7 +143,53 @@ window.getResonatorDetails = function(d) {
 
   }
 
-  return '<table id="resodetails">' + genFourColumnTable(resoDetails) + '</table>';
+  var fillGrade = getTotalPortalEnergy(d) > 0 ? Math.round(getCurrentPortalEnergy(d) / getTotalPortalEnergy(d) * 100) : 0;
+  
+  switch (Math.round(fillGrade/10)) {
+    case 0:
+      var energyIcon = '<div class="info-icon">@@INCLUDESTRING:images/energy-icons/battery-0.svg@@</div>'
+      break;
+    case 1:
+      var energyIcon = '<div class="info-icon">@@INCLUDESTRING:images/energy-icons/battery-10.svg@@</div>'
+      break;
+    case 2:
+      var energyIcon = '<div class="info-icon">@@INCLUDESTRING:images/energy-icons/battery-20.svg@@</div>'
+      break;
+    case 3:
+      var energyIcon = '<div class="info-icon">@@INCLUDESTRING:images/energy-icons/battery-30.svg@@</div>'
+      break;
+    case 4:
+      var energyIcon = '<div class="info-icon">@@INCLUDESTRING:images/energy-icons/battery-40.svg@@</div>'
+      break;
+    case 5:
+      var energyIcon = '<div class="info-icon">@@INCLUDESTRING:images/energy-icons/battery-50.svg@@</div>'
+      break;
+    case 6:
+      var energyIcon = '<div class="info-icon">@@INCLUDESTRING:images/energy-icons/battery-60.svg@@</div>'
+      break;
+    case 7:
+      var energyIcon = '<div class="info-icon">@@INCLUDESTRING:images/energy-icons/battery-70.svg@@</div>'
+      break;
+    case 8:
+      var energyIcon = '<div class="info-icon">@@INCLUDESTRING:images/energy-icons/battery-80.svg@@</div>'
+      break;
+    case 9:
+      var energyIcon = '<div class="info-icon">@@INCLUDESTRING:images/energy-icons/battery-90.svg@@</div>'
+      break;
+    case 10:
+      var energyIcon = '<div class="info-icon">@@INCLUDESTRING:images/energy-icons/battery-100.svg@@</div>'
+      break;
+  
+    default:
+      var energyIcon = '<div class="info-icon">@@INCLUDESTRING:images/energy-icons/battery-100.svg@@</div>'
+      break;
+  }
+
+  var totalEnergy = '<div class="info-item">' + energyIcon + '<div class="info-text">' + fillGrade + '% '
+    + (getTotalPortalEnergy(d) > 0 ? '(' + getCurrentPortalEnergy(d) + ' / ' + getTotalPortalEnergy(d) + ')' : '')
+    + '</div></div>';
+
+  return totalEnergy + '<div id="resodetails">' + (d.resonators.length !== 0 ? genTwoColumns(resoDetails) : '' ) + '</div>';
 
 }
 
@@ -166,18 +212,26 @@ window.renderResonatorDetails = function(slot, level, nrg, nick) {
                        : '')
           + (slot !== null ? 'octant:\t' + OCTANTS[slot] + ' ' + OCTANTS_ARROW[slot]:'');
 
-  var style = fillGrade ? 'width:'+fillGrade+'%; background:'+COLORS_LVL[level]+';':'';
+  var style_with_width = fillGrade ? 'height:' + fillGrade + '%; background:' + COLORS_LVL[level] + ';' : '';
+
+  var style = fillGrade ? 'background:' + COLORS_LVL[level] + '32;' : '';
 
   var color = (level < 3 ? "#9900FF" : "#FFFFFF");
 
-  var lbar = level > 0 ? '<span class="meter-level" style="color: ' + color + ';"> L ' + level + ' </span>' : '';
+  var lbar = level > 0 ? '<div class="meter-level" style="color: ' + color + ';">' + level + ' </div>' : '';
 
-  var fill  = '<span style="'+style+'"></span>';
+  var fill = '<div style="' + style_with_width + '"></div>';
+  
+  var meter = '<div class="' + className + '" title="' + inf + '" style=' + style + '>' + fill + '</div>';
 
-  var meter = '<span class="' + className + '" title="'+inf+'">' + fill + lbar + '</span>';
+  nick = nick ? '<span class="nickname">' + nick + '</span>' : '';
 
-  nick = nick ? '<span class="nickname">'+nick+'</span>' : null;
-  return [meter, nick || ''];
+
+  var stats = '<div class="resostats">' + '<span class="resoenergy">' + Math.round(fillGrade) + '% (' + nrg + '/' + max + ')</span>' + nick + '</div>'
+  
+  var menuentry = '<div class="resonator">' + meter + lbar + stats + '</div>'
+
+  return menuentry;
 }
 
 // calculate AP gain from destroying portal and then capturing it by deploying resonators

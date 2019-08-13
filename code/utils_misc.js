@@ -339,6 +339,16 @@ window.genFourColumnTable = function(blocks) {
   return t;
 }
 
+window.genTwoColumns = function (blocks) {
+  var t = $.map(blocks, function (detail, index) {
+    if (!detail) return '';
+    if (index % 2 === 0)
+      return '<div class="left-column">' + detail + '</div>';
+    else
+      return '<div class="right-column">' + detail + '</div>';
+  }).join('');
+  return t;
+}
 
 // converts given text with newlines (\n) and tabs (\t) to a HTML
 // table automatically.

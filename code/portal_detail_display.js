@@ -176,7 +176,7 @@ window.getPortalMiscDetails = function(guid,d) {
     var linksText = ['links', links.outgoing+' out / '+links.incoming+' in', title];
 
     var player = d.owner
-      ? '<span class="nickname">' + d.owner + '</span>'
+      ? d.owner
       : '-';
     var playerText = ['owner', player];
 
